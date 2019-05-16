@@ -223,10 +223,17 @@ class GoogleSignIn {
     // TODO(amirh): remove this on when the invokeMethod update makes it to stable Flutter.
     // https://github.com/flutter/flutter/issues/26431
     // ignore: strong_mode_implicit_dynamic_method
-    final Map<dynamic, dynamic> response = await channel.invokeMethod(method);
-    return _setCurrentUser(response != null && response.isNotEmpty
-        ? GoogleSignInAccount._(this, response)
-        : null);
+    try {
+      final Map<dynamic, dynamic> response = await channel.invokeMethod(method);
+      return _setCurrentUser(response != null && response.isNotEmpty
+          ? GoogleSignInAccount._(this, response)
+          : null);
+    } catch (error) {
+      print(error.toString());
+      return null;
+      // Another option could be rethrowing:
+      rethrow;
+    }
   }
 
   GoogleSignInAccount _setCurrentUser(GoogleSignInAccount currentUser) {
